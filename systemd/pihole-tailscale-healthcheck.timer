@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Pi-hole over Tailscale health check hourly
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=600
+Persistent=true
+Unit=pihole-tailscale-healthcheck.service
+
+[Install]
+WantedBy=timers.target

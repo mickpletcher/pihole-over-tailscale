@@ -1,0 +1,46 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Install validation dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes dnsutils jq ripgrep shellcheck unzip zip
+
+      - name: Lint Markdown
+        run: npx --yes markdownlint-cli2@0.23.2 "**/*.md" "!prompts/**"
+
+      - name: Lint shell scripts
+        run: shellcheck scripts/*.sh scripts/lib/*.sh tests/*.sh
+
+      - name: Run safe tests and internal-link checks
+        run: bash tests/run-tests.sh
+
+      - name: Check committed whitespace
+        run: git diff --check "$(git hash-object -t tree /dev/null)" HEAD
+
+      - name: Scan secrets
+        uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
