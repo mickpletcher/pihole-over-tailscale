@@ -12,7 +12,7 @@ TEST_TMP=$(mktemp -d)
 TESTS_RUN=0
 TESTS_FAILED=0
 
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 cleanup() {
   case ${TEST_TMP} in
     /tmp/*|/var/tmp/*) rm -r -- "${TEST_TMP}" ;;

@@ -178,7 +178,7 @@ if [[ ${available_percent} =~ ^[0-9]+$ ]] && ((available_percent < DISK_FREE_PER
 fi
 
 temp_dir=$(mktemp -d "${resolved_output}/.backup.XXXXXX")
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 cleanup() {
   rm -f -- "${temp_dir}"/*.zip 2>/dev/null || true
   rmdir -- "${temp_dir}" 2>/dev/null || true
